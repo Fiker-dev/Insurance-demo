@@ -1,60 +1,58 @@
-# Insurance Admin Assistant (Demo)
+# 🧾 Insurance Admin Assistant (Demo)
 
 A lightweight, single-file web app that demonstrates how AI and automation can simplify day-to-day admin tasks for insurance professionals.
 
-**Live Demo:** [https://insurancedemo.lulidigital.com](https://insurancedemo.lulidigital.com)
+**🌍 Live Demo:** [https://insurancedemo.lulidigital.com](https://insurancedemo.lulidigital.com)
 
 ---
 
 ## 🧠 Overview
-The **Insurance Admin Assistant** is designed to show insurers, brokers, and agents how AI can streamline routine tasks like:
-- Lead intake and quote generation  
-- Renewal tracking and reminders  
-- Smart follow-ups and quick insights  
-- Instant client support via a built-in assistant  
 
-It’s fully static — no backend or database required — so you can host it freely on GitHub Pages, Netlify, or Vercel.
+The **Insurance Admin Assistant** is a proof-of-concept app built by **Luli Digital** to show how insurers, brokers, and financial advisors can automate repetitive admin work.  
+
+It’s 100% static (no backend), fast to deploy, and perfect for demos that illustrate:
+- Lead management  
+- Policy renewal tracking  
+- Client reminders and follow-ups  
+- Quote estimation and reporting  
+- Smart AI-style assistance without code  
 
 ---
 
 ## ⚙️ Features
 
-### 1. **Quote Intake Form**
-- Capture client name, contact info, policy type, coverage amount, and renewal date.
-- Auto-generates a premium estimate (demo formula).
-- Submits instantly with a success confirmation.
+### 🧾 1. Quote Intake Form
+- Capture client info (name, policy type, coverage, age, renewal date, notes).
+- Instantly estimate premiums using a sample formula.
+- Submits instantly with success confirmation.
 
-### 2. **Leads & Quotes Dashboard**
-- View and manage all leads.
-- Quick actions: **Follow-up**, **Quote**, or **Won**.
-- Search and filter by status or policy type.
+### 📊 2. Leads & Quotes Dashboard
+- Displays all new and existing leads.
+- One-click actions: **Follow-up**, **Quote**, **Won**.
+- Filter or search by client name, type, or status.
 
-### 3. **Renewals Table**
-- Tracks all policies expiring within 30 days.
-- One-click reminder sends a simulated message and logs it in the assistant.
+### 🕓 3. Renewals Tracker
+- Lists policies renewing within the next 30 days.
+- “Send Reminder” triggers a simulated renewal notification.
 
-### 4. **Assistant Panel**
-- Built-in chat that answers FAQ-style queries:
+### 💬 4. Assistant Chat Panel
+- Built-in chat to handle common insurance questions:
   - “How do I claim?”
   - “Renewal for Sarah?”
   - “Change beneficiary”
-- Works entirely offline with rule-based logic.
+- Works offline (rule-based demo).
 
-### 5. **Brand Settings**
-- Instantly rebrand: update broker name and email from within the app.
-- Saves settings in localStorage for demo persistence.
+### 🧩 5. Settings & Branding
+- Set your **Broker/Agency name** and **notification email**.
+- Auto-updates branding and saves locally in your browser.
 
-### 6. **Export & Reporting**
-- Export all leads to CSV.
-- Generate weekly summary snapshots for demo presentations.
+### 📤 6. Export & Reports
+- Export all client data to CSV.  
+- Simulate weekly summary reports with one click.
 
 ---
 
-## 🚀 Deployment
+## 🚀 Deployment Guide
 
 ### Hosting on GitHub Pages
-1. Clone this repo or upload the files.  
-2. In your repository:  
-   - **Settings → Pages → Source:** `Deploy from a branch`  
-   - **Branch:** `main / (root)`  
-3. *(Optional)* Add a `CNAME` file for your custom domain:  
+1. Upload these files to your GitHub repo:
