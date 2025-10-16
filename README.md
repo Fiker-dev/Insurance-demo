@@ -49,6 +49,7 @@ It’s 100% static (no backend), fast to deploy, and perfect for demos that illu
 ### 📤 6. Export & Reports
 - Export all client data to CSV.  
 - Simulate weekly summary reports with one click.
+- 
 
 ---
 
