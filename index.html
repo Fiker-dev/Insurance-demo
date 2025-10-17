@@ -3,218 +3,416 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Insurance Admin Assistant — Demo</title>
-  <meta name="description" content="A lightweight, single‑file demo app showing an insurance agent workflow: lead intake, auto‑summary, renewals, and an FAQ assistant. No backend required." />
-  <!-- ✅ Favicon -->
+  <title>Aubrey’s Admin Assistant — Demo</title>
+  <meta name="description" content="Gina, the AI assistant for insurers. Organize leads, renewals, follow-ups, and notes — fast." />
   <link rel="icon" href="favicon.ico" type="image/x-icon" />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
   <style>
     :root{
-      --bg:#0f172a; --panel:#0b1225; --muted:#1e293b; --card:#111827; --text:#e5e7eb; --sub:#94a3b8; --brand:#22d3ee; --accent:#38bdf8; --good:#22c55e; --warn:#eab308; --bad:#ef4444; --ring:0 0 0 3px rgba(34,211,238,.35)
+      --bg:#0e1320; --panel:#11182a; --card:#141d33; --ink:#e9eef7; --muted:#9fb0c8;
+      --brand:#59c4ff; --brand-2:#8bd1ff; --good:#22c55e; --warn:#f5b40a; --bad:#ef4444;
+      --ring:0 0 0 2px rgba(89,196,255,.35);
     }
     *{box-sizing:border-box}
     html,body{height:100%}
-    body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:linear-gradient(180deg,var(--bg),#0b1020 40%, #0a0f1c 100%);color:var(--text)}
-    a{color:var(--accent);text-decoration:none}
-    .container{display:grid;grid-template-columns:320px 1fr;gap:16px;min-height:100vh}
-    header{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;padding:16px 20px;background:rgba(255,255,255,.02);backdrop-filter:blur(8px);border-bottom:1px solid rgba(148,163,184,.12);position:sticky;top:0;z-index:50}
-    .logo{display:flex;gap:12px;align-items:center}
-    .logo-badge{width:36px;height:36px;border-radius:12px;background:radial-gradient(120% 120% at 10% 20%, var(--brand), var(--accent));display:grid;place-items:center;box-shadow:0 10px 30px rgba(34,211,238,.25)}
-    .logo-badge svg{filter:drop-shadow(0 2px 6px rgba(0,0,0,.5))}
-    .title{font-weight:700;letter-spacing:.2px}
-    .subtitle{color:var(--sub);font-size:12px}
-    .bar-actions{display:flex;gap:8px;align-items:center}
-    .btn{border:1px solid rgba(148,163,184,.2);background:linear-gradient(180deg,rgba(148,163,184,.08),rgba(148,163,184,.03));color:var(--text);padding:10px 12px;border-radius:14px;font-weight:600;cursor:pointer;transition:.15s transform, .15s border-color}
-    .btn:hover{transform:translateY(-1px);border-color:rgba(148,163,184,.35)}
-    .btn.brand{border-color:transparent;background:linear-gradient(180deg,var(--brand),#1fb7cf);color:#03222a;box-shadow:0 10px 25px rgba(34,211,238,.25)}
-    .btn.ghost{background:transparent}
-    .sidebar{padding:16px;position:sticky;top:68px;height:calc(100vh - 68px);overflow:auto}
-    .panel{background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,.01));border:1px solid rgba(148,163,184,.12);border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.3)}
-    .chat{display:flex;flex-direction:column;height:100%}
-    .chat-head{padding:14px 14px 8px;border-bottom:1px solid rgba(148,163,184,.12)}
-    .chat-body{padding:14px;display:flex;flex-direction:column;gap:10px;overflow:auto}
-    .chat-foot{padding:12px;border-top:1px solid rgba(148,163,184,.12);display:flex;gap:8px}
-    .bubble{max-width:85%;padding:10px 12px;border-radius:14px;line-height:1.4}
-    .bubble.bot{background:#0f172a;border:1px solid rgba(148,163,184,.18)}
-    .bubble.user{background:rgba(34,211,238,.1);border:1px solid rgba(34,211,238,.25)}
-    .quick-row{display:flex;flex-wrap:wrap;gap:8px;padding:10px 14px;border-top:1px dashed rgba(148,163,184,.18)}
-    .chip{padding:6px 10px;border-radius:999px;border:1px solid rgba(148,163,184,.22);cursor:pointer;color:var(--sub);font-size:12px}
-    .main{padding:16px;padding-top:0}
-    .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:16px}
-    .card{grid-column:span 12;background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,.01));border:1px solid rgba(148,163,184,.12);border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.25)}
-    .card-head{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:1px solid rgba(148,163,184,.12)}
-    .card-body{padding:16px}
+    body{
+      margin:0; font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      color:var(--ink); background:linear-gradient(180deg,#0b1020 0%, #0c152c 100%);
+    }
+
+    /* Layout */
+    header{position:sticky;top:0;z-index:20;background:#0d1426bd;backdrop-filter:blur(8px);
+      border-bottom:1px solid rgba(159,176,200,.18); display:flex;gap:16px;align-items:center;
+      padding:14px 18px;}
+    .logo-badge{width:40px;height:40px;border-radius:12px; display:grid;place-items:center;
+      background:linear-gradient(150deg,var(--brand),#1da3ff); box-shadow:0 8px 20px rgba(29,163,255,.25);}
+    .title{font-weight:800;letter-spacing:.2px}
+    .subhead{color:var(--muted);font-size:12px;margin-top:2px}
+    .wrap{max-width:1200px;margin:0 auto;padding:16px}
+    .grid{display:grid;grid-template-columns:280px 1fr 360px;gap:16px}
+    @media (max-width:1100px){ .grid{grid-template-columns:1fr} }
+
+    /* Cards / panels */
+    .card{background:var(--card);border:1px solid rgba(159,176,200,.15);border-radius:14px;box-shadow:0 8px 30px rgba(0,0,0,.25);}
+    .panel{background:var(--panel);border:1px solid rgba(159,176,200,.15);border-radius:14px;box-shadow:0 8px 30px rgba(0,0,0,.25);}
+    .section{padding:16px}
+    h2{margin:0 0 10px 0;font-size:16px;letter-spacing:.2px}
     .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
-    .kpi{border:1px solid rgba(148,163,184,.12);border-radius:14px;padding:12px;background:rgba(15,23,42,.6)}
-    .kpi .val{font-size:22px;font-weight:700}
-    .kpi .lbl{font-size:12px;color:var(--sub)}
-    .form-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}
-    label{font-size:12px;color:var(--sub);display:block;margin-bottom:6px}
-    input, select, textarea{width:100%;padding:10px 12px;border-radius:12px;border:1px solid rgba(148,163,184,.2);background:#0a1222;color:var(--text);outline:none}
-    input:focus, select:focus, textarea:focus{box-shadow:var(--ring);border-color:transparent}
-    textarea{min-height:90px;resize:vertical}
-    table{width:100%;border-collapse:collapse}
-    th, td{padding:10px 8px;text-align:left;border-bottom:1px solid rgba(148,163,184,.1)}
-    th{color:var(--sub);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.6px}
-    .tag{padding:4px 8px;border-radius:999px;font-size:12px;border:1px solid rgba(148,163,184,.18);color:var(--sub)}
-    .tag.good{border-color:rgba(34,197,94,.35);color:#86efac}
-    .tag.warn{border-color:rgba(234,179,8,.35);color:#fde68a}
-    .tag.bad{border-color:rgba(239,68,68,.35);color:#fca5a5}
-    .split{display:grid;grid-template-columns:1.2fr .8fr;gap:16px}
-    .toast{position:fixed;right:18px;bottom:18px;background:#0b1225;border:1px solid rgba(148,163,184,.25);padding:12px 14px;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.35);display:none}
-    footer{grid-column:1/-1;color:var(--sub);text-align:center;padding:16px}
-    @media (max-width:1100px){.container{grid-template-columns:1fr}.sidebar{position:static;height:auto}.split{grid-template-columns:1fr}.kpis{grid-template-columns:repeat(2,1fr)}}
-    @media (max-width:640px){.kpis{grid-template-columns:1fr}.form-grid{grid-template-columns:1fr}}
+    @media (max-width:700px){ .kpis{grid-template-columns:repeat(2,1fr)} }
+    .kpi{padding:14px;border-radius:12px; background:#101a31;border:1px solid rgba(159,176,200,.1);
+      transition:transform .15s ease; }
+    .kpi:hover{transform:translateY(-2px)}
+    .kpi .lbl{color:var(--muted);font-size:12px}
+    .kpi .val{font-size:24px;font-weight:800;letter-spacing:.2px;margin-top:6px}
+    .kpi.good .val{color:var(--good)} .kpi.warn .val{color:var(--warn)}
+
+    /* Tables */
+    .table{width:100%;border-collapse:collapse}
+    .table th,.table td{padding:10px 8px;border-bottom:1px solid rgba(159,176,200,.1);text-align:left;font-size:14px}
+    .table th{color:var(--muted);font-weight:700}
+
+    /* Form */
+    .form{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+    .form .full{grid-column:1/-1}
+    label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px}
+    input,select,textarea{
+      width:100%;padding:12px 12px;border-radius:12px;background:#0e1730;color:var(--ink);
+      border:1px solid rgba(159,176,200,.22);outline:none;font-size:14px;transition:.15s border-color,.15s box-shadow;
+    }
+    input:focus,select:focus,textarea:focus{box-shadow:var(--ring);border-color:transparent}
+    .actions{display:flex;gap:10px;flex-wrap:wrap}
+    .btn{
+      border:1px solid rgba(159,176,200,.25);background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.03));
+      color:var(--ink);padding:12px 14px;border-radius:12px;font-weight:700;cursor:pointer;transition:.15s transform,.15s border-color;
+    }
+    .btn:hover{transform:translateY(-1px)}
+    .btn.brand{border-color:transparent;background:linear-gradient(180deg,var(--brand),#1da3ff);color:#081018;box-shadow:0 10px 25px rgba(29,163,255,.25)}
+    .btn.ghost{background:transparent}
+    .note{color:var(--muted);font-size:12px}
+
+    /* Chat (Gina) */
+    .chat{display:flex;flex-direction:column;height:100%}
+    .chat-box{flex:1;overflow:auto;padding:14px;display:flex;flex-direction:column;gap:10px}
+    .msg{max-width:85%;padding:10px 12px;border-radius:12px;white-space:pre-wrap}
+    .me{align-self:flex-end;background:#173159;border:1px solid rgba(159,176,200,.18)}
+    .gina{align-self:flex-start;background:#0e1730;border:1px solid rgba(159,176,200,.18)}
+    .chat-input{display:flex;gap:8px;padding:12px;border-top:1px solid rgba(159,176,200,.12)}
+    .chat-input input{flex:1}
+    .fade-in{animation:fade .35s ease}
+    @keyframes fade{from{opacity:.0;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+    footer{color:var(--muted);text-align:center;padding:14px;font-size:12px}
   </style>
 </head>
 <body>
-  <div class="container">
-    <header>
-      <div class="logo">
-        <div class="logo-badge" aria-hidden="true">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12 2l3.5 6.5L22 10l-5 4.5L18 22l-6-3.5L6 22l1-7.5L2 10l6.5-1.5L12 2z" fill="white"/></svg>
-        </div>
-        <div>
-          <div class="title" id="appTitle">Insurance Admin Assistant</div>
-          <div class="subtitle">Demo for busy brokers and advisors</div>
-        </div>
-      </div>
-      <div class="bar-actions">
-        <button class="btn ghost" id="btnLoadDemo">Load Demo Data</button>
-        <button class="btn" id="btnExport">Export CSV</button>
-        <button class="btn brand" id="btnWeekly">Email Weekly Summary</button>
-      </div>
-    </header>
+  <header>
+    <div class="logo-badge" aria-hidden="true">💧</div>
+    <div>
+      <div class="title">Aubrey’s Admin Assistant</div>
+      <div class="subhead">“Gina” — organizes renewals, follow-ups, leads, and notes</div>
+    </div>
+    <div style="margin-left:auto;display:flex;gap:8px;">
+      <button class="btn ghost" id="demoBtn">Load Demo Data</button>
+      <button class="btn brand" id="exportBtn">Export CSV</button>
+    </div>
+  </header>
 
-    <aside class="sidebar">
-      <div class="panel chat" role="complementary" aria-label="Assistant">
-        <div class="chat-head"><strong>Assistant</strong><div class="subtitle">Quick answers for your clients</div></div>
-        <div id="chatBody" class="chat-body" aria-live="polite"></div>
-        <div class="quick-row" id="quickRow"></div>
-        <div class="chat-foot">
-          <input id="chatInput" type="text" placeholder="Ask e.g. ‘How to claim?’ or ‘Renewal for Sarah?’" aria-label="Ask a question" />
+  <div class="wrap">
+    <div class="grid">
+      <!-- LEFT: Dashboard -->
+      <section class="panel section">
+        <h2>Today</h2>
+        <div class="kpis" id="kpis">
+          <div class="kpi"><div class="lbl">New Leads</div><div class="val" id="kpiLeads">0</div></div>
+          <div class="kpi warn"><div class="lbl">Follow-ups Due</div><div class="val" id="kpiFups">0</div></div>
+          <div class="kpi"><div class="lbl">Renewals (7d)</div><div class="val" id="kpiRen">0</div></div>
+          <div class="kpi good"><div class="lbl">Pipeline (Won)</div><div class="val" id="kpiWon">0</div></div>
+        </div>
+
+        <div style="height:12px"></div>
+        <div class="card section fade-in">
+          <h2>Upcoming Renewals</h2>
+          <table class="table" id="tblRenewals">
+            <thead><tr><th>Client</th><th>Policy</th><th>Renewal</th><th>Status</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+
+        <div style="height:12px"></div>
+        <div class="card section fade-in">
+          <h2>Follow-ups</h2>
+          <table class="table" id="tblFollowups">
+            <thead><tr><th>Client</th><th>Reason</th><th>Due</th><th>Contact</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- CENTER: Quote Intake (bigger form) -->
+      <section class="card section">
+        <h2>New Quote (Internal)</h2>
+        <div class="note">Filled by Aubrey or team during in-person meetings. Gina can auto-fill later via email/calendar integrations.</div>
+        <div style="height:10px"></div>
+        <form id="quoteForm" class="form">
+          <div>
+            <label>Full Name</label>
+            <input id="f_name" placeholder="e.g., Sarah Ndlovu" required />
+          </div>
+          <div>
+            <label>Phone</label>
+            <input id="f_phone" placeholder="+27 ..." />
+          </div>
+          <div>
+            <label>Email</label>
+            <input id="f_email" type="email" placeholder="name@company.com" />
+          </div>
+          <div>
+            <label>Policy Type</label>
+            <select id="f_type">
+              <option>Life</option><option>Auto</option><option>Home</option>
+            </select>
+          </div>
+          <div>
+            <label>Coverage Amount (ZAR)</label>
+            <input id="f_cover" type="number" placeholder="e.g., 500000" />
+          </div>
+          <div>
+            <label>Age</label>
+            <input id="f_age" type="number" min="18" max="100" placeholder="e.g., 34" />
+          </div>
+          <div>
+            <label>Smoker</label>
+            <select id="f_smoker"><option>No</option><option>Yes</option></select>
+          </div>
+          <div>
+            <label>Renewal Target</label>
+            <input id="f_renewal" type="date" />
+          </div>
+          <div class="full">
+            <label>Notes</label>
+            <textarea id="f_notes" rows="3" placeholder="Meeting notes, special conditions..."></textarea>
+          </div>
+          <div class="actions full">
+            <button type="button" class="btn" id="estimateBtn">Estimate Premium</button>
+            <button type="submit" class="btn brand">Create Lead</button>
+            <div class="note" id="formMsg"></div>
+          </div>
+        </form>
+
+        <div style="height:12px"></div>
+        <div class="card section fade-in">
+          <h2>Leads & Quotes</h2>
+          <table class="table" id="tblLeads">
+            <thead><tr><th>Name</th><th>Policy</th><th>Est Premium</th><th>Status</th><th>Next Action</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- RIGHT: Gina (Chat) + Notes -->
+      <aside class="panel section chat">
+        <h2>Chat with Gina</h2>
+        <div class="note">Try: “summarize renewals this week” • “3 renewal subject lines” • “log note: call Thabo 10am tomorrow”.</div>
+        <div class="chat-box card" id="chatBox">
+          <div class="msg gina fade-in">Hi, I’m Gina. I’ll help you with renewals, follow-ups, quotes and notes. What do you need?</div>
+        </div>
+        <div class="chat-input">
+          <input id="chatInput" placeholder="Ask Gina..." />
           <button class="btn brand" id="chatSend">Send</button>
         </div>
-      </div>
-    </aside>
 
-    <main class="main">
-      <div class="grid">
-        <section class="card" aria-labelledby="kpiTitle">
-          <div class="card-head">
-            <div><strong id="kpiTitle">Today at a glance</strong><div class="subtitle">What needs your attention first</div></div>
-            <div class="subtitle" id="brokerNameLbl">Broker: <span id="brokerName">(set in Settings)</span></div>
+        <div style="height:12px"></div>
+        <div class="card section">
+          <h2>Notes & Reminders</h2>
+          <div class="note">Say “remind me tomorrow 09:00 to call Sarah” or add below. (Demo stores locally.)</div>
+          <div class="actions" style="margin-top:8px">
+            <input id="noteText" placeholder="Note or reminder..." />
+            <button class="btn" id="addNoteBtn">Add</button>
           </div>
-          <div class="card-body kpis" id="kpis">
-            <div class="kpi"><div class="val" id="kpiNew">0</div><div class="lbl">New Leads</div></div>
-            <div class="kpi"><div class="val" id="kpiFollow">0</div><div class="lbl">Follow‑ups Today</div></div>
-            <div class="kpi"><div class="val" id="kpiRenew">0</div><div class="lbl">Renewals (7d)</div></div>
-            <div class="kpi"><div class="val" id="kpiPipeline">R0</div><div class="lbl">Est. Premium Pipeline</div></div>
-          </div>
-        </section>
-
-        <section class="split">
-          <div class="card" aria-labelledby="intakeTitle">
-            <div class="card-head"><div><strong id="intakeTitle">Quote Intake Form</strong><div class="subtitle">Create a lead in 30 seconds</div></div><button class="btn" id="btnClearForm" title="Clear form">Clear</button></div>
-            <div class="card-body">
-              <form id="leadForm" class="form-grid" autocomplete="off">
-                <div class="col" style="grid-column:span 3"><label for="name">Client Full Name</label><input id="name" required placeholder="e.g., Sarah Ndlovu" /></div>
-                <div class="col" style="grid-column:span 3"><label for="email">Email</label><input id="email" type="email" placeholder="sarah@example.com" /></div>
-                <div class="col" style="grid-column:span 2"><label for="phone">Phone</label><input id="phone" placeholder="071 234 5678" /></div>
-                <div class="col" style="grid-column:span 2"><label for="policyType">Policy Type</label><select id="policyType" required><option>Life</option><option>Vehicle</option><option>Home</option><option>Health</option><option>Business</option></select></div>
-                <div class="col" style="grid-column:span 2"><label for="coverage">Coverage Amount (R)</label><input id="coverage" type="number" min="0" step="5000" placeholder="1500000" /></div>
-                <div class="col" style="grid-column:span 2"><label for="age">Age</label><input id="age" type="number" min="18" max="100" placeholder="35" /></div>
-                <div class="col" style="grid-column:span 2"><label for="smoker">Smoker</label><select id="smoker"><option>No</option><option>Yes</option></select></div>
-                <div class="col" style="grid-column:span 2"><label for="renewal">Renewal Date</label><input id="renewal" type="date" /></div>
-                <div class="col" style="grid-column:span 6"><label for="notes">Notes</label><textarea id="notes" placeholder="Any extra context (beneficiaries, claims history, etc.)"></textarea></div>
-                <div class="col" style="grid-column:span 6;display:flex;gap:8px;justify-content:flex-end"><button class="btn ghost" type="button" id="btnEstimate">Estimate Premium</button><button class="btn brand" type="submit">Create Lead</button></div>
-              </form>
-              <div id="estimateOut" class="subtitle" style="margin-top:8px"></div>
-              <div id="submitMsg" class="subtitle" style="margin-top:6px;color:#86efac"></div>
-            </div>
-          </div>
-
-          <div class="card" aria-labelledby="leadsTitle">
-            <div class="card-head"><div><strong id="leadsTitle">Leads & Quotes</strong><div class="subtitle">Filter & act quickly</div></div>
-              <div style="display:flex;gap:8px"><input id="leadSearch" placeholder="Search name, type, status" style="width:220px" /><select id="statusFilter"><option value="">All</option><option>New</option><option>Follow‑up</option><option>Quoted</option><option>Won</option><option>Lost</option></select></div>
-            </div>
-            <div class="card-body" style="overflow:auto">
-              <table id="leadTable" aria-describedby="leadsTitle"><thead><tr><th>Client</th><th>Type</th><th>Coverage</th><th>Est. Premium</th><th>Next Action</th><th>Status</th><th>Due</th><th></th></tr></thead><tbody></tbody></table>
-            </div>
-          </div>
-        </section>
-
-        <section class="card" aria-labelledby="renewTitle">
-          <div class="card-head"><div><strong id="renewTitle">Renewals (Next 30 Days)</strong><div class="subtitle">Prevent lapses automatically</div></div></div>
-          <div class="card-body" style="overflow:auto">
-            <table id="renewTable"><thead><tr><th>Client</th><th>Policy</th><th>Renewal</th><th>Contact</th><th>Stage</th><th></th></tr></thead><tbody></tbody></table>
-          </div>
-        </section>
-
-        <section class="card" aria-labelledby="settingsTitle">
-          <div class="card-head"><div><strong id="settingsTitle">Settings</strong><div class="subtitle">Brand this demo in seconds</div></div></div>
-          <div class="card-body form-grid">
-            <div class="col" style="grid-column:span 3"><label for="broker">Broker/Agency Name</label><input id="broker" placeholder="Your Agency Name" /></div>
-            <div class="col" style="grid-column:span 3"><label for="notify">Notification Email</label><input id="notify" type="email" placeholder="team@agency.co.za" /></div>
-            <div class="col" style="grid-column:span 6;display:flex;gap:8px;justify-content:flex-end"><button class="btn" id="btnSaveSettings">Save Settings</button><button class="btn ghost" id="btnReset">Reset Demo</button></div>
-            <div class="subtitle" id="saveMsg"></div>
-          </div>
-        </section>
-      </div>
-    </main>
-
-    <footer>Static demo. Data is stored locally (localStorage). Ready for GitHub Pages, Netlify, Vercel.</footer>
+          <ul id="notesList" style="margin:10px 0 0 0;padding:0;list-style:none;"></ul>
+        </div>
+      </aside>
+    </div>
   </div>
 
-  <div class="toast" id="toast"></div>
+  <footer>© Luli Digital • Built for demo — switch between mock/live seamlessly.</footer>
 
   <script>
-    const LS_KEY = 'insurance_admin_assistant.v1';
-    const state = { leads: [], settings: { broker: '', notify: '' } };
-    function load(){ try{ const raw = localStorage.getItem(LS_KEY); if(raw){ Object.assign(state, JSON.parse(raw)); } }catch(e){} renderAll(); }
-    function save(){ localStorage.setItem(LS_KEY, JSON.stringify(state)); }
-    const R = new Intl.NumberFormat('en-ZA', { style:'currency', currency:'ZAR', maximumFractionDigits:0 });
-    const fmtDate = d => new Date(d).toLocaleDateString();
-    const uid = () => Math.random().toString(36).slice(2,9);
-    function estimatePremium({policyType, coverage=0, age=35, smoker='No'}){ const baseByType = { Life: 350, Vehicle: 480, Home: 420, Health: 520, Business: 690 }; const base = baseByType[policyType] || 400; const risk = (Number(age)-30)*3 + (smoker==='Yes'? 120 : 0); const coverageAdj = Math.min(coverage/100000, 40); return Math.max(199, Math.round(base + risk + coverageAdj)); }
-    function toast(msg){ const el = document.getElementById('toast'); el.textContent = msg; el.style.display='block'; setTimeout(()=> el.style.display='none', 2600); }
+    // ---------- CONFIG ----------
+    const API_URL = "https://insurance-demo-one.vercel.app/api/chat"; // your Vercel endpoint
+    const FORCE_MOCK = true; // set to false when your API billing is live
 
-    function renderAll(){ renderKPIs(); renderLeads(); renderRenewals(); renderSettings(); renderAssistantWelcome(); }
-    function renderKPIs(){ const now = new Date(); const in7 = new Date(now.getTime()+7*86400000); const newCount = state.leads.filter(l=>l.status==='New').length; const followCount = state.leads.filter(l=> l.nextAction && new Date(l.nextAction)<=now).length; const renewCount = state.leads.filter(l=> l.renewal && new Date(l.renewal)<=in7).length; const pipeline = state.leads.filter(l=> ['New','Follow‑up','Quoted'].includes(l.status)).reduce((s,l)=> s + (l.premium||0), 0); document.getElementById('kpiNew').textContent=newCount; document.getElementById('kpiFollow').textContent=followCount; document.getElementById('kpiRenew').textContent=renewCount; document.getElementById('kpiPipeline').textContent=R.format(pipeline); document.getElementById('brokerName').textContent=state.settings.broker||'(not set)'; }
-    function renderLeads(){ const tbody=document.querySelector('#leadTable tbody'); tbody.innerHTML=''; const q=(document.getElementById('leadSearch').value||'').toLowerCase(); const status=document.getElementById('statusFilter').value; state.leads.filter(l=>!status||l.status===status).filter(l=>!q||[l.name,l.policyType,l.status].join(' ').toLowerCase().includes(q)).sort((a,b)=> (b.createdAt||0)-(a.createdAt||0)).forEach(l=>{ const tr=document.createElement('tr'); tr.innerHTML=`<td><strong>${l.name}</strong><div class="subtitle">${l.email||''} ${l.phone? '· '+l.phone:''}</div></td><td>${l.policyType}</td><td>${l.coverage? 'R'+Number(l.coverage).toLocaleString() : '-'}</td><td>${l.premium? R.format(l.premium):'-'}</td><td>${l.summary || '<span class="subtitle">—</span>'}</td><td><span class="tag ${l.status==='Won'?'good': l.status==='Lost'?'bad': l.status==='Follow‑up'?'warn':''}">${l.status}</span></td><td>${l.nextAction? fmtDate(l.nextAction):'-'}</td><td style="white-space:nowrap"><button class="btn" data-act="follow" data-id="${l.id}">Follow‑up</button><button class="btn" data-act="quote" data-id="${l.id}">Quote</button><button class="btn" data-act="won" data-id="${l.id}">Won</button></td>`; tbody.appendChild(tr); }); }
-    function renderRenewals(){ const tbody=document.querySelector('#renewTable tbody'); tbody.innerHTML=''; const in30=new Date(Date.now()+30*86400000); state.leads.filter(l=>l.renewal && new Date(l.renewal)<=in30).sort((a,b)=> new Date(a.renewal)-new Date(b.renewal)).forEach(l=>{ const tr=document.createElement('tr'); tr.innerHTML=`<td><strong>${l.name}</strong></td><td>${l.policyType}</td><td>${fmtDate(l.renewal)}</td><td>${l.email || l.phone || '-'}</td><td><span class="tag warn">Renewal</span></td><td><button class="btn" data-act="remind" data-id="${l.id}">Send Reminder</button></td>`; tbody.appendChild(tr); }); }
-    function renderSettings(){ document.getElementById('broker').value=state.settings.broker||''; document.getElementById('notify').value=state.settings.notify||''; document.getElementById('appTitle').textContent= state.settings.broker? `${state.settings.broker} — Assistant`:'Insurance Admin Assistant'; }
+    // ---------- STATE ----------
+    const state = {
+      leads: [],
+      renewals: [],
+      followups: [],
+      pipelineWon: 0,
+      notes: JSON.parse(localStorage.getItem("aubrey_notes")||"[]")
+    };
 
-    document.getElementById('leadForm').addEventListener('submit', e=>{ e.preventDefault(); const l={ id:uid(), createdAt:Date.now(), name:val('name'), email:val('email'), phone:val('phone'), policyType:val('policyType'), coverage:Number(val('coverage')||0), age:Number(val('age')||35), smoker:val('smoker'), notes:val('notes'), renewal:val('renewal')||null, status:'New' }; l.premium=estimatePremium(l); l.summary=autoSummary(l); l.nextAction=new Date(Date.now()+2*86400000); state.leads.unshift(l); save(); renderAll(); toast(`Quote submitted successfully. We will get back to you shortly.`); text('submitMsg','Quote submitted successfully. We will get back to you shortly.'); setTimeout(()=> text('submitMsg',''), 3000); e.target.reset(); text('estimateOut',''); addBot(`New lead: ${l.name} — ${l.policyType}. Estimated premium ${R.format(l.premium)}. Follow‑up on ${fmtDate(l.nextAction)}.`); });
-    document.getElementById('btnEstimate').addEventListener('click', ()=>{ const data={ policyType:val('policyType'), coverage:Number(val('coverage')||0), age:Number(val('age')||35), smoker:val('smoker') }; const est=estimatePremium(data); text('estimateOut',`Estimated monthly premium: ${R.format(est)} (demo formula)`); });
-    document.getElementById('btnClearForm').addEventListener('click', ()=>{ document.getElementById('leadForm').reset(); text('estimateOut',''); });
-    document.getElementById('leadTable').addEventListener('click', e=>{ const btn=e.target.closest('button'); if(!btn) return; const id=btn.dataset.id; const act=btn.dataset.act; const l=state.leads.find(x=>x.id===id); if(!l) return; if(act==='follow'){ l.status='Follow‑up'; l.nextAction=new Date(Date.now()+24*3600*1000); toast(`Follow‑up scheduled for ${l.name} on ${fmtDate(l.nextAction)}`);} if(act==='quote'){ l.status='Quoted'; l.summary=autoSummary(l,true); toast(`Quote sent to ${l.email||l.phone||l.name}.`);} if(act==='won'){ l.status='Won'; l.nextAction=null; toast(`Deal won: ${l.name} — ${R.format(l.premium)} / mo`);} save(); renderAll(); });
-    document.getElementById('renewTable').addEventListener('click', e=>{ const btn=e.target.closest('button'); if(!btn) return; const id=btn.dataset.id; const l=state.leads.find(x=>x.id===id); if(!l) return; toast(`Reminder email queued for ${l.name} (${l.email||'no email'}).`); addBot(`Sent renewal reminder to ${l.name} for ${fmtDate(l.renewal)}.`); });
-    document.getElementById('leadSearch').addEventListener('input', renderLeads); document.getElementById('statusFilter').addEventListener('change', renderLeads);
-    document.getElementById('btnSaveSettings').addEventListener('click', ()=>{ state.settings.broker=val('broker'); state.settings.notify=val('notify'); save(); renderKPIs(); const msg=document.getElementById('saveMsg'); msg.textContent='Saved. Your branding is applied.'; setTimeout(()=> msg.textContent='', 2000); });
-    document.getElementById('btnReset').addEventListener('click', ()=>{ if(confirm('Reset demo data?')){ localStorage.removeItem(LS_KEY); state.leads=[]; state.settings={broker:'',notify:''}; renderAll(); }});
-    document.getElementById('btnExport').addEventListener('click', ()=>{ const rows=[["id","name","email","phone","policyType","coverage","age","smoker","premium","status","nextAction","renewal","createdAt","summary"]]; state.leads.forEach(l=> rows.push([ l.id,l.name,l.email,l.phone,l.policyType,l.coverage,l.age,l.smoker,l.premium,l.status,l.nextAction? new Date(l.nextAction).toISOString(): '', l.renewal||'', new Date(l.createdAt).toISOString(), (l.summary||'').replace(/
-/g,' ') ])); const csv=rows.map(r=> r.map(v=> '"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('
-'); const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='insurance_assistant_export.csv'; a.click(); URL.revokeObjectURL(url); });
-    document.getElementById('btnWeekly').addEventListener('click', ()=>{ const newL=state.leads.filter(l=> l.status==='New').length; const quoted=state.leads.filter(l=> l.status==='Quoted').length; const won=state.leads.filter(l=> l.status==='Won').length; const renewSoon=state.leads.filter(l=> l.renewal && new Date(l.renewal)<= new Date(Date.now()+7*86400000)).length; toast(`Weekly summary sent to ${state.settings.notify||'your email'}.`); addBot(`Weekly summary. New: ${newL}, Quoted: ${quoted}, Won: ${won}, Renewals (7d): ${renewSoon}.`); });
+    // ---------- HELPERS ----------
+    const $ = (id)=>document.getElementById(id);
+    const fmtZAR = (n)=> n ? "R " + (Number(n)).toLocaleString() : "—";
+    const fmtDate = (d)=> d ? new Date(d).toLocaleDateString() : "—";
 
-    const chatBody=document.getElementById('chatBody'); const chatInput=document.getElementById('chatInput'); const chatSend=document.getElementById('chatSend'); const quickRow=document.getElementById('quickRow');
-    function addUser(msg){ const b=document.createElement('div'); b.className='bubble user'; b.textContent=msg; chatBody.appendChild(b); chatBody.scrollTop=chatBody.scrollHeight; }
-    function addBot(msg){ const b=document.createElement('div'); b.className='bubble bot'; b.innerHTML=msg; chatBody.appendChild(b); chatBody.scrollTop=chatBody.scrollHeight; }
-    function respond(q){ const t=q.toLowerCase(); if(/how.*claim|file.*claim|claim steps?/.test(t)) return `To claim: 1) Complete claim form, 2) Provide ID + policy number, 3) Evidence (photos, invoices), 4) Bank details. We’ll confirm within 24–48h.`; if(/beneficiar(y|ies)|change.*beneficiary/.test(t)) return `To change beneficiaries: submit the beneficiary update form with ID. Changes reflect within 24h of approval.`; if(/renew(al)?|when.*renew/.test(t)){ const name=t.match(/for ([a-z ]+)/)?.[1]?.trim(); if(name){ const lead=state.leads.find(l=> l.name.toLowerCase().includes(name)); if(lead && lead.renewal) return `${lead.name}'s renewal is ${fmtDate(lead.renewal)}. I can send a reminder now.`; } const soon=state.leads.filter(l=> l.renewal).sort((a,b)=> new Date(a.renewal)-new Date(b.renewal)).slice(0,3); if(soon.length) return `Next renewals: ${soon.map(s=> `${s.name} — ${fmtDate(s.renewal)}`).join('; ')}`; return `No upcoming renewals found. Add renewal dates in the form to track automatically.`; } if(/quote|premium|estimate/.test(t)) return `Use “Estimate Premium” on the form. The demo uses a placeholder formula by type, age, smoker, and coverage.`; if(/contact|email|phone/.test(t)) return `Set your notification email in Settings. New leads will ‘email’ you automatically in this demo.`; return `I can help with claims, renewals, quotes, beneficiaries, and contact details. Try: <em>“Renewal for Sarah?”</em>`; }
-    function renderAssistantWelcome(){ chatBody.innerHTML=''; addBot(`<strong>Hi!</strong> I’m your assistant. Ask about claims, renewals, quotes, and more.`); quickRow.innerHTML=''; ['How do I claim?','When is my renewal?','Change beneficiary','Estimate premium','Contact details'].forEach(t=>{ const c=document.createElement('button'); c.className='chip'; c.textContent=t; c.addEventListener('click',()=>{ chatInput.value=t; send(); }); quickRow.appendChild(c); }); }
-    function send(){ const q=chatInput.value.trim(); if(!q) return; addUser(q); const r=respond(q); addBot(r); chatInput.value=''; chatInput.focus(); }
-    chatSend.addEventListener('click', send); chatInput.addEventListener('keydown', e=>{ if(e.key==='Enter') send(); });
+    function estPremium({type, cover, age, smoker}){
+      // simple demo calc
+      const base = {Life: 0.0022, Auto: 0.0012, Home: 0.0009}[type] || 0.001;
+      const ageFactor = Math.max(0.8, Math.min(1.6, (age? (age/40) : 1)));
+      const smokeFactor = smoker==="Yes" ? 1.25 : 1.0;
+      return Math.round((cover||0) * base * ageFactor * smokeFactor);
+    }
 
-    document.getElementById('btnLoadDemo').addEventListener('click', ()=>{ if(!confirm('Load sample data? This will append to your current leads.')) return; const samples=[ {name:'Sarah Ndlovu', policyType:'Life', coverage:1500000, age:35, smoker:'No', email:'sarah@demo.co.za', phone:'0712345678', renewal:isoFromNow(12), notes:'Primary: spouse; 1 child'}, {name:'Thabo Mokoena', policyType:'Vehicle', coverage:300000, age:29, smoker:'No', email:'thabo@demo.co.za', phone:'0721112222', renewal:isoFromNow(25), notes:'2019 VW Polo; tracker installed'}, {name:'Naledi Dlamini', policyType:'Home', coverage:1200000, age:41, smoker:'No', email:'naledi@demo.co.za', phone:'0830001111', renewal:isoFromNow(5), notes:'Gated estate; low risk'}, {name:'Michael Smith', policyType:'Business', coverage:5000000, age:50, smoker:'Yes', email:'mike@demo.co.za', phone:'0823334444', renewal:isoFromNow(18), notes:'Logistics; fleet of 8 vans'}, ]; samples.forEach(s=>{ const l={ id:uid(), createdAt:Date.now(), status:'New', nextAction:new Date(Date.now()+3*86400000), ...s }; l.premium=estimatePremium(l); l.summary=autoSummary(l); state.leads.push(l); }); save(); renderAll(); toast('Loaded sample data'); });
-    function isoFromNow(days){ return new Date(Date.now()+days*86400000).toISOString().slice(0,10); }
-    function autoSummary(l, quoted=false){ const parts=[]; parts.push(`${l.policyType} cover for ${l.name}${l.coverage? ' @ R'+Number(l.coverage).toLocaleString():''}.`); parts.push(`Age ${l.age}${l.smoker==='Yes'? ', smoker':''}. Est premium ${R.format(l.premium||estimatePremium(l))}.`); if(l.renewal) parts.push(`Renewal ${fmtDate(l.renewal)}.`); if(quoted) parts.push(`Quote sent.`); return parts.join(' '); }
-    function val(id){ return document.getElementById(id).value.trim(); }
-    function text(id, v){ document.getElementById(id).textContent=v; }
+    function toast(msg){ const el=$("formMsg"); el.textContent=msg; setTimeout(()=>el.textContent="", 3000); }
 
-    load();
+    function renderKpis(){
+      $("kpiLeads").textContent = state.leads.length;
+      $("kpiFups").textContent = state.followups.length;
+      const soon = state.renewals.filter(r=> new Date(r.renewal) - new Date() <= 7*86400000);
+      $("kpiRen").textContent = soon.length;
+      $("kpiWon").textContent = state.pipelineWon;
+    }
+
+    function renderTable(id, rows){
+      const tbody = document.querySelector(`#${id} tbody`);
+      tbody.innerHTML = rows.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join("")}</tr>`).join("");
+    }
+
+    function renderLists(){
+      renderTable("tblRenewals",
+        state.renewals
+         .sort((a,b)=>new Date(a.renewal)-new Date(b.renewal))
+         .map(r=>[r.name, r.policy, fmtDate(r.renewal), r.status||"—"]));
+
+      renderTable("tblFollowups",
+        state.followups
+         .sort((a,b)=>new Date(a.due)-new Date(b.due))
+         .map(f=>[f.name, f.reason, fmtDate(f.due), f.contact||"—"]));
+
+      renderTable("tblLeads",
+        state.leads
+         .slice(-50)
+         .reverse()
+         .map(l=>[l.name, l.policyType, fmtZAR(l.premium), l.status, fmtDate(l.nextAction)]));
+    }
+
+    // ---------- DEMO DATA ----------
+    function loadDemo(){
+      state.leads = [
+        {name:"Sarah Ndlovu", policyType:"Life", premium: 820, status:"New", nextAction:new Date()},
+        {name:"Thabo Khumalo", policyType:"Auto", premium: 540, status:"Quoted", nextAction:new Date(Date.now()+86400000)},
+        {name:"Naledi D.", policyType:"Home", premium: 460, status:"Won", nextAction:null}
+      ];
+      state.renewals = [
+        {name:"Sarah Ndlovu", policy:"Life R500k", renewal:new Date(Date.now()+2*86400000), status:"Pending"},
+        {name:"Thabo Khumalo", policy:"Auto — Comprehensive", renewal:new Date(Date.now()+3*86400000), status:"Contacted"},
+        {name:"Ayesha Patel", policy:"Home R1.2m", renewal:new Date(Date.now()+5*86400000), status:"Pending"}
+      ];
+      state.followups = [
+        {name:"Naledi D.", reason:"Send revised quote", due:new Date(Date.now()+86400000), contact:"naledi@example.com"},
+        {name:"Pierre L.", reason:"Request documents", due:new Date(Date.now()+2*86400000), contact:"+27 82 000 0000"}
+      ];
+      state.pipelineWon = 1;
+      renderKpis(); renderLists();
+      appendGina("Loaded demo data. Ask me: ‘summarize renewals this week’ or ‘3 renewal subject lines’.", true);
+    }
+
+    // ---------- CHAT / GINA ----------
+    const chatBox = $("chatBox");
+    function appendMe(msg){ const el=document.createElement("div"); el.className="msg me fade-in"; el.textContent=msg; chatBox.appendChild(el); chatBox.scrollTop=chatBox.scrollHeight; }
+    function appendGina(msg, soft){ const el=document.createElement("div"); el.className="msg gina fade-in"; el.textContent=(soft?"": "Gina: ")+msg; chatBox.appendChild(el); chatBox.scrollTop=chatBox.scrollHeight; }
+    function mockAnswer(q){
+      const t=q.toLowerCase();
+      if(t.includes("renewal") && (t.includes("week")||t.includes("today"))) {
+        const soon = state.renewals.map(r=>`${r.name} — ${fmtDate(r.renewal)} (${r.policy})`).join("\n");
+        return soon ? `Upcoming renewals:\n${soon}` : "No renewals scheduled.";
+      }
+      if(t.includes("subject")||t.includes("email")){
+        return "Quick Reminder: Renew Today\nYour Policy Renewal — Stay Covered\nFriendly Nudge: Renew in Minutes";
+      }
+      if(t.startsWith("log note")||t.startsWith("add note")){
+        const content = q.replace(/^log note:|^add note:/i,'').trim();
+        if(content){ state.notes.push({text:content, at:new Date()}); persistNotes(); renderNotes(); return "Noted. I’ll remind you during daily summary."; }
+        return "What should I note?";
+      }
+      if(t.includes("follow-up")) {
+        return state.followups.length ? state.followups.map(f=>`${f.name} — ${f.reason} — ${fmtDate(f.due)}`).join("\n") : "No follow-ups due.";
+      }
+      if(t.includes("quote")||t.includes("premium")){
+        return "For quick premium estimate, fill the form (coverage, age, smoker) and click ‘Estimate Premium’.";
+      }
+      return "I can help with renewals, follow-ups, quotes, and notes. Try: ‘summarize renewals this week’ or ‘log note: call Sarah 09:00 tomorrow’.";
+    }
+
+    async function askGina(q){
+      if(FORCE_MOCK){ return mockAnswer(q); }
+      try{
+        const r = await fetch(API_URL,{
+          method:"POST", headers:{"Content-Type":"application/json"},
+          body: JSON.stringify({ message:q })
+        });
+        const data = await r.json();
+        return data.reply || mockAnswer(q);
+      }catch(e){ return mockAnswer(q); }
+    }
+
+    $("chatSend").addEventListener("click", async ()=>{
+      const q = $("chatInput").value.trim(); if(!q) return;
+      $("chatInput").value=""; appendMe(q);
+      appendGina("…thinking");
+      const ans = await askGina(q);
+      const last = chatBox.querySelector(".gina:last-child"); last.textContent = ans;
+    });
+
+    // ---------- NOTES ----------
+    function renderNotes(){
+      const list=$("notesList"); list.innerHTML="";
+      state.notes.slice().reverse().forEach((n,i)=>{
+        const li=document.createElement("li");
+        li.style.margin="8px 0"; li.style.fontSize="14px";
+        li.textContent = `• ${n.text}  —  ${new Date(n.at).toLocaleString()}`;
+        list.appendChild(li);
+      });
+      persistNotes();
+    }
+    function persistNotes(){ localStorage.setItem("aubrey_notes", JSON.stringify(state.notes)); }
+    $("addNoteBtn").addEventListener("click", ()=>{
+      const t=$("noteText").value.trim(); if(!t) return;
+      state.notes.push({text:t, at:new Date()}); $("noteText").value=""; renderNotes();
+    });
+
+    // ---------- FORM ----------
+    $("estimateBtn").addEventListener("click", ()=>{
+      const data = collectForm();
+      const p = estPremium(data);
+      toast(`Estimated Premium: ${fmtZAR(p)}`);
+    });
+
+    $("quoteForm").addEventListener("submit",(e)=>{
+      e.preventDefault();
+      const d = collectForm();
+      const premium = estPremium(d);
+      state.leads.push({
+        name:d.name, policyType:d.type, premium, status:"New",
+        nextAction: new Date(Date.now()+2*86400000)
+      });
+      if(d.renewal){ state.renewals.push({name:d.name, policy:`${d.type} ${fmtZAR(d.cover)}`, renewal:d.renewal, status:"Pending"}); }
+      renderKpis(); renderLists();
+      e.target.reset();
+      toast("Lead created. Gina can follow up from chat.");
+    });
+
+    function collectForm(){
+      return {
+        name:$("f_name").value.trim(),
+        phone:$("f_phone").value.trim(),
+        email:$("f_email").value.trim(),
+        type:$("f_type").value,
+        cover:Number($("f_cover").value || 0),
+        age:Number($("f_age").value || 0),
+        smoker:$("f_smoker").value,
+        renewal:$("f_renewal").value ? new Date($("f_renewal").value) : null,
+        notes:$("f_notes").value.trim()
+      };
+    }
+
+    // ---------- EXPORT ----------
+    $("exportBtn").addEventListener("click", ()=>{
+      const rows = [["Name","Policy","Premium","Status","NextAction"]];
+      state.leads.forEach(l=>rows.push([l.name,l.policyType,l.premium,l.status, l.nextAction? new Date(l.nextAction).toISOString().slice(0,10):""]));
+      const csv = rows.map(r=>r.map(x=>`"${(x??"").toString().replace(/"/g,'""')}"`).join(",")).join("\n");
+      const blob = new Blob([csv],{type:"text/csv;charset=utf-8;"});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a"); a.href=url; a.download="leads.csv"; a.click();
+      URL.revokeObjectURL(url);
+    });
+
+    // ---------- DEMO BUTTON ----------
+    $("demoBtn").addEventListener("click", loadDemo);
+
+    // init
+    renderKpis(); renderLists(); renderNotes();
   </script>
 </body>
 </html>
