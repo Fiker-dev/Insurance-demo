@@ -1,41 +1,37 @@
+
 import OpenAI from "openai";
-const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+
+const client = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
 
 export default async function handler(req, res) {
-  // CORS for your Pages site
-  res.setHeader("Access-Control-Allow-Origin", "*"); // replace * with https://insurancedemo.lulidigital.com once tested
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  if (req.method === "OPTIONS") return res.status(200).end();
-
-  if (req.method === "GET") {
-    return res.status(200).json({ message: "✅ API ready for GPT" });
-  }
+  // Ensure it only runs on POST requests
   if (req.method !== "POST") {
-    return res.status(405).json({ error: "Use POST {message, context?, history?}" });
+    return res.status(405).json({ error: "Method not allowed" });
   }
 
   try {
-    let body = req.body || {};
-    if (typeof body === "string") body = JSON.parse(body);
-    const { message = "", context = "", history = [] } = body;
+    const { message } = req.body;
 
-    const messages = [
-      { role: "system", content: "You are an insurance admin assistant. Be concise and action-oriented." },
-      { role: "system", content: `Business context: ${context || "N/A"}` },
-      ...history,
-      { role: "user", content: message }
-    ];
+    if (!message) {
+      return res.status(400).json({ error: "Missing message in request body" });
+    }
 
-    const out = await client.chat.completions.create({
-      model: "gpt-4o-mini",
-      messages,
-      temperature: 0.2
+    // Send the message to GPT
+    const completion = await client.chat.completions.create({
+      model: "gpt-4o-mini", // lightweight model, great for small demos
+      messages: [
+        { role: "system", content: "You are an assistant helping with insurance data entry and client management." },
+        { role: "user", content: message },
+      ],
     });
 
-    return res.status(200).json({ reply: out.choices[0].message.content });
-  } catch (e) {
-    console.error("chat error:", e);
-    return res.status(500).json({ error: "Server error", detail: e.message });
+    const reply = completion.choices[0].message.content;
+    return res.status(200).json({ reply });
+
+  } catch (error) {
+    console.error("API error:", error);
+    return res.status(500).json({ error: error.message || "Server error" });
   }
 }
